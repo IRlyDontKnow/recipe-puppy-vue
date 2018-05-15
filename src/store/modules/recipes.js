@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { FAVOURITES_TITLES_KEY } from '@/constants';
+import mockedAxios from '@/mockedAxios';
 
 const baseState = {
   items: [],
@@ -7,7 +8,6 @@ const baseState = {
     ? JSON.parse(localStorage.getItem(FAVOURITES_TITLES_KEY))
     : [],
   loading: false,
-  error: null,
 };
 
 const actions = {
@@ -25,8 +25,6 @@ const actions = {
       });
 
       commit('SET_ITEMS', recipes);
-    } catch (error) {
-      commit('SET_ERROR', 'An error occured while fetching recipes!');
     } finally {
       commit('SET_LOADING', false);
     }
@@ -60,8 +58,8 @@ const actions = {
 
     commit('SET_ITEMS', items);
   },
-  addRecipe() {
-    return new Promise(resolve => setTimeout(resolve, 2000));
+  async addRecipe(store, form) {
+    await mockedAxios.post('/recipes', form);
   },
   clearFavourites({ commit, state }) {
     localStorage.removeItem(FAVOURITES_TITLES_KEY);
@@ -77,9 +75,6 @@ const actions = {
 };
 
 const mutations = {
-  SET_ERROR(state, error) {
-    state.error = error;
-  },
   SET_ITEMS(state, items) {
     state.items = items;
   },
